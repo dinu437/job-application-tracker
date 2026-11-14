@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<section class="page-heading">
+  <div><div class="eyebrow">YOUR CAREER WORKSPACE</div><h1>Application dashboard</h1><p class="muted">Keep every opportunity, follow-up and interview in one place.</p></div>
+  <a class="button primary" href="{{ url_for('add_application') }}">＋ Add application</a>
+</section>
+<section class="stats">
+  <article class="stat-card"><span class="stat-label">TOTAL APPLICATIONS</span><strong>{{ stats.total }}</strong><span class="stat-note">All tracked opportunities</span></article>
+  <article class="stat-card"><span class="stat-label">IN PROGRESS</span><strong>{{ stats.active }}</strong><span class="stat-note">Applied, assessment or interview</span></article>
+  <article class="stat-card"><span class="stat-label">INTERVIEWS</span><strong>{{ stats.interviews }}</strong><span class="stat-note">Interview stage</span></article>
+  <article class="stat-card"><span class="stat-label">OFFERS</span><strong>{{ stats.offers }}</strong><span class="stat-note">Offers received</span></article>
+</section>
+<section class="list-section">
+  <div class="list-heading"><div><div class="eyebrow">YOUR PIPELINE</div><h2>Job applications</h2></div><span class="result-count">{{ applications|length }} shown</span></div>
+  <form class="filters" method="get" action="{{ url_for('index') }}">
+    <input type="search" name="q" value="{{ q }}" placeholder="Search company, role or location…" aria-label="Search applications">
+    <select name="status" aria-label="Filter by status"><option value="">All statuses</option>{% for s in statuses %}<option value="{{ s }}" {% if selected_status == s %}selected{% endif %}>{{ s }}</option>{% endfor %}</select>
+    <button class="button secondary" type="submit">Filter</button>
+    {% if q or selected_status %}<a class="clear-link" href="{{ url_for('index') }}">Clear</a>{% endif %}
+  </form>
+  {% if applications %}
+  <div class="table-wrap"><table><thead><tr><th>COMPANY / ROLE</th><th>LOCATION</th><th>STATUS</th><th>APPLIED</th><th>FOLLOW UP</th><th>ACTIONS</th></tr></thead><tbody>
+  {% for app in applications %}
+  <tr>
+    <td><div class="company">{{ app.company }}</div><div class="role">{{ app.role }}</div>{% if app.job_url %}<a class="job-link" href="{{ app.job_url }}" target="_blank" rel="noopener noreferrer">View job ↗</a>{% endif %}</td>
+    <td>{{ app.location or "—" }}<div class="tiny">{{ app.work_mode }}</div></td>
+    <td><span class="status status-{{ app.status|lower }}">{{ app.status }}</span></td>
+    <td>{{ app.applied_date or "—" }}</td><td>{{ app.follow_up_date or "—" }}</td>
+    <td><div class="actions"><a class="action-link" href="{{ url_for('edit_application', application_id=app.id) }}">Edit</a><form method="post" action="{{ url_for('delete_application', application_id=app.id) }}" onsubmit="return confirm('Delete this application?');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="action-link danger" type="submit">Delete</button></form></div></td>
+  </tr>
+  {% endfor %}
+  </tbody></table></div>
+  {% else %}
+  <div class="empty"><div class="empty-icon">↗</div><h3>No applications yet</h3><p>Add your first job application to start tracking your search.</p><a class="button primary" href="{{ url_for('add_application') }}">＋ Add your first application</a></div>
+  {% endif %}
+</section>
+{% endblock %}

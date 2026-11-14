@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }}{% endblock %}
+{% block content %}
+<section class="form-heading"><a class="back" href="{{ url_for('index') }}">← Back to dashboard</a><div class="eyebrow">KEEP YOUR SEARCH ORGANISED</div><h1>{{ page_title }}</h1><p class="muted">Add the details you need. Company and job title are required.</p></section>
+<form class="application-form" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="form-grid">
+    <label>Company name <span>*</span><input name="company" required maxlength="120" value="{{ application.get('company','') }}" placeholder="e.g. Acme Technologies"></label>
+    <label>Job title <span>*</span><input name="role" required maxlength="120" value="{{ application.get('role','') }}" placeholder="e.g. Junior Python Developer"></label>
+    <label>Location<input name="location" maxlength="120" value="{{ application.get('location','') }}" placeholder="e.g. Chandigarh, India"></label>
+    <label>Work mode<select name="work_mode">{% for mode in work_modes %}<option {% if application.get('work_mode','On-site') == mode %}selected{% endif %}>{{ mode }}</option>{% endfor %}</select></label>
+    <label>Status<select name="status">{% for s in statuses %}<option {% if application.get('status','Wishlist') == s %}selected{% endif %}>{{ s }}</option>{% endfor %}</select></label>
+    <label>Job posting URL<input type="url" name="job_url" value="{{ application.get('job_url','') }}" placeholder="https://…"></label>
+    <label>Applied date<input type="date" name="applied_date" value="{{ application.get('applied_date','') }}"></label>
+    <label>Follow-up date<input type="date" name="follow_up_date" value="{{ application.get('follow_up_date','') }}"></label>
+    <label>Salary / compensation<input name="salary" maxlength="80" value="{{ application.get('salary','') }}" placeholder="e.g. ₹4–6 LPA"></label>
+    <label class="full">Notes<textarea name="notes" rows="4" maxlength="2000" placeholder="Recruiter name, interview details, next steps…">{{ application.get('notes','') }}</textarea></label>
+  </div>
+  <div class="form-actions"><a class="button secondary" href="{{ url_for('index') }}">Cancel</a><button class="button primary" type="submit">Save application</button></div>
+</form>
+{% endblock %}
