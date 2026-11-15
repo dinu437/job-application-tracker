@@ -1,52 +1,37 @@
-# JobTrack — Job Application Tracker
+# JobTrack — Private Flask Job Application Tracker
 
-A beginner-friendly Flask + SQLite project for tracking job applications.
+Flask application with registration, sign-in, sign-out, per-user application isolation, CSRF protection, and PostgreSQL support.
 
-## Features
-- Dashboard summary: total applications, in progress, interviews and offers
-- Add, edit and delete applications
-- Search by company, role or location
-- Filter by application status
-- Track work mode, job URL, applied date, follow-up date, compensation and notes
-- SQLite database created automatically on first run
-- CSRF protection with Flask-WTF
-- Responsive interface
+## Local setup (Windows PowerShell)
 
-## Run locally (Windows / VS Code)
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python app.py
+```
 
-1. Install Python 3.10+.
-2. Open this folder in VS Code.
-3. Open Terminal → New Terminal.
-4. Create a virtual environment:
+Open http://127.0.0.1:5000 and create an account. Without `DATABASE_URL`, the app uses a local SQLite file for development. On Render, set `DATABASE_URL` to your Neon PostgreSQL connection string.
 
-   ```powershell
-   py -m venv .venv
-   .venv\Scripts\Activate.ps1
-   ```
+## Render
 
-   If PowerShell blocks activation, use Command Prompt terminal and run:
-   ```cmd
-   .venv\Scripts\activate.bat
-   ```
+- Build command: `pip install -r requirements.txt`
+- Start command: `gunicorn app:app`
+- Health check path: `/health`
+- Environment variables:
+  - `SECRET_KEY`: long random secret (Render can generate this)
+  - `DATABASE_URL`: Neon PostgreSQL connection string
+  - `COOKIE_SECURE=1`
 
-5. Install dependencies:
-   ```bash
-   python -m pip install -r requirements.txt
-   ```
+## Security and data
 
-6. Start the app:
-   ```bash
-   python app.py
-   ```
+- Every application query and write is scoped to the signed-in user.
+- Passwords are stored as hashes.
+- Keep `.env`, database files, and secrets out of GitHub.
+- Use HTTPS in production.
+- Back up the PostgreSQL database regularly. A free tier is not a substitute for backups.
+- This is a personal portfolio project; before production use, add rate limiting, account recovery, monitoring, and tested backup/restore procedures.
 
-7. Open http://127.0.0.1:5000 in your browser.
+## Existing SQLite data
 
-The SQLite database `tracker.db` is created automatically. It is intentionally excluded from Git.
-
-## Before deploying
-- Set a strong random `SECRET_KEY` environment variable in your hosting provider.
-- Do not commit `.env`, `tracker.db`, or secrets.
-- SQLite data on some free hosting services may be ephemeral. For a durable public deployment, use a persistent disk or managed database. We'll choose a host/database after local testing.
-
-## Suggested GitHub repository
-`job-application-tracker`
+The new PostgreSQL database starts empty. Existing local SQLite records are not automatically copied. Export/import them only after creating a backup and confirming ownership mapping.

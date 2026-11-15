@@ -1,1 +1,5 @@
-{% extends "base.html" %}{% block title %}Not found{% endblock %}{% block content %}<div class="empty"><div class="eyebrow">404</div><h1>Page not found</h1><p class="muted">That page doesn't exist. Return to your dashboard.</p><a class="button primary" href="{{ url_for('index') }}">Go to dashboard</a></div>{% endblock %}
+{% extends "base.html" %}
+{% block title %}Not found{% endblock %}
+{% block content %}
+<section class="empty"><div class="eyebrow">404 ERROR</div><h1>Page not found</h1><p class="muted">The page may have moved or the record may not belong to your account.</p><a class="button primary" href="{{ url_for('index') }}">Back to dashboard</a></section>
+{% endblock %}

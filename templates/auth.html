@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ "Create account" if mode == "register" else "Sign in" }}{% endblock %}
+{% block content %}
+<section class="auth-card">
+  <div class="eyebrow">YOUR PRIVATE CAREER WORKSPACE</div>
+  <h1>{{ "Create your account" if mode == "register" else "Welcome back" }}</h1>
+  <p class="muted">{{ "Create a login to keep your job applications private." if mode == "register" else "Sign in to access your job application tracker." }}</p>
+  <form method="post" class="auth-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Email address
+      <input type="email" name="email" required maxlength="254" autocomplete="email" value="{{ request.form.get('email','') }}" placeholder="you@example.com">
+    </label>
+    <label>Password
+      <input type="password" name="password" required minlength="12" autocomplete="{{ 'new-password' if mode == 'register' else 'current-password' }}" placeholder="At least 12 characters">
+    </label>
+    {% if mode == "register" %}
+    <label>Confirm password
+      <input type="password" name="confirm_password" required minlength="12" autocomplete="new-password" placeholder="Enter the same password again">
+    </label>
+    <p class="tiny">Use at least 12 characters. Your password is stored as a one-way hash, not plain text.</p>
+    {% endif %}
+    <button class="button primary auth-submit" type="submit">{{ "Create account" if mode == "register" else "Sign in" }}</button>
+  </form>
+  <p class="auth-switch">{% if mode == "register" %}Already have an account? <a href="{{ url_for('login') }}">Sign in</a>{% else %}New to JobTrack? <a href="{{ url_for('register') }}">Create an account</a>{% endif %}</p>
+</section>
+{% endblock %}
